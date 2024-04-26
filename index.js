@@ -1,27 +1,24 @@
-// In order to import the dependency "date-fns"
-const { format } = require('date-fns');
+// To import the module that we had created
+const logEvents = require('./logEvents.js');
 
-// In order to import the dependency "uuid" - And then the "v4" with it that is, we want to use it to get the code for each output
-const {v4: uuid} = require('uuid')
+const EventEmitter = require('events');
 
+// To create the class
+class MyEmitter extends EventEmitter {};
 
+// Then to initialize the object
+const myEmitter = new MyEmitter();
 
+// add listener for the log event
+// Then we want to add a listener to log event 
+myEmitter.on('log', (msg) => logEvents(msg));
 
-// Note that new Date() is a built in function fo
-//console.log(new Date());
+setTimeout(() =>{
+     // Emit Event
+     myEmitter.emit('log', 'Log event emitted!');
+}, 2000 )
 
-// To make use of the format
-console.log(format(new Date(), 'yyyyMMdd\tHH:mm:ss'))
-
-//console.log('hello')
-
-
-console.log(uuid()); // This is used to print out a form of code for every code written
 
 /**
- * If we ever decide to add anything else to the console, then we can see a change in the code
+ * Note that emitter could be used with web servers to emit the type of request that came in and all
  */
-console.log("Usman");
-
-
-
