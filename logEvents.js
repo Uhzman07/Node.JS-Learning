@@ -18,7 +18,7 @@ const fs = require('fs');
 const fsPromises = require('fs').promises;
 const path = require('path');
 
-const logEvents = async (message) => {
+const logEvents = async (message , logName) => {
     const dateTime =   `${format(new Date(), 'yyyyMMdd\tHH:mm:ss')}`;
 
     // To get the log id every time we make a change to the console.log 
@@ -33,7 +33,7 @@ const logEvents = async (message) => {
             // Then to create the 'logs' directory
             await fsPromises.mkdir(path.join(__dirname, 'logs'));
         }
-        await fsPromises.appendFile(path.join(__dirname, 'logs', 'eventLog.txt'), logItem);
+        await fsPromises.appendFile(path.join(__dirname, 'logs', logName), logItem);
 
     }catch(err){
         console.log(err);

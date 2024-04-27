@@ -1,0 +1,112 @@
+Note that we need to install the NPM using https://docs.npmjs.com/ Then we go ahead to install the NPM CLI - Command Line Inteface
+// To open the terminal, We can use Ctrl + ` - That is back tick.
+
+// This is used to install nodemon in such a way that nodemon helps us to create a global view so that we dont always have to type "Node" everytime
+$ npm i nodemon -g
+
+// then we can type "nodemon" -> This looks up our file automatically , then runs it 
+-> Then if we modify our file, then we get to run it again.
+
+-> To exit nodemon, we can use Ctrl+C;
+
+-> Then type npm init -> We get asked a lof questions to verify here
+-> We could also make use of npm init -y // This will avoid asking different questions
+// After answering all the questions then we get a "package.json" file, this file will contain all the details about the questions that we answered, This configurations will apply to Git later on.
+
+// To create a package
+-> npm i date-fns
+// This gets added to our file as a dependency
+
+// Then we can create the ".gitignore" file
+// Then we add the node_modules folder to it
+ because the node modules folder contains a lot of files that we do not want in  git
+
+-> If by any chance we are pulling from a git repository, then we will can make use of "npm install" in the terminal so as to be able install the third party npm modules
+
+// For us to be able to make use of "nodemon" as a Dev dependency
+-> We have to type "npm i nodemon -D" in  the terminal, this will allows us to be able make use of nodemon and also saved.
+
+-> Then we can see it in our "package.json" file (As a div dependency)
+
+-> Then we also insert this in the package.json
+ "scripts": {
+    "start" : "node index",
+    "dev": "nodemon index"
+  },
+
+-> Then to start our project
+npm run dev
+
+// Note any changes that we make will be automatically run "nodemon"
+
+npm i uuid -- This allows us to generate a new id for every entry that we put in
+// This will then be added as a dependency in the package.json file
+
+// In order to get the documentations 
+-> We go to npm (online) -> Search uuid / Any other thing that we want to search
+
+"uuid": "^9.0.1"
+- First number means a major version
+- Second number means a minor version
+- Third number means a patch version
+- "^" means a command to tell that we should go ahead and update the minor version but we don't want it to update the major version
+
+"uuid": "~9.0.1"
+-- This means update the patch version
+
+"uuid": "*" 
+-- This means go ahead and update to have the latest version every time
+-- Note that this is not a safe approach (can cause a breaking change)
+
+-- If there is a need to update but not manually, then we use
+npm update -- To update the values
+
+-- To uninstall
+npm rm
+
+npm rm nodemon -D -- This is used to remove nodemon (The dev version)
+
+Flags
+npm rm nodemon -D  -- "-D" means dev version
+npm rm nodemon -g  -- "-g" means the global version
+-- npm rm nodemon -- Empty means production version 
+
+-- Note that if we uninstall a dependency like nodemon
+-- It gets removed from the dependency but it doesn't get removed from the scripts, we have to do it manually
+
+// To remove a file from git cache system
+git rm -r --cached node_modules
+
+// To add nodemon 
+npm run dev
+
+******  Note that this emitter will always listen to any kind of change in the code itself.
+
+/////////////////////////// WEB SERVER TUTORIAL ////////////////////////////
+In the package.json file, change the main to "server.js"
+// And then the index.js will change to server.js
+
+// Run npm run dev, this is used to run the server (daemon to listen to the changes that occur)
+
+// To check the changes that occur we have to go to Chrome and localhost:3500 - Note that whenever we click this, we see "GET" in the terminal to show that a GET request is been made
+
+// Initially, if we run this 
+ console.log(req.url, req.method) -> We get "/ GET"
+
+ // Then we run npm again using "npm run dev"
+
+ // When we run again 
+ If we search "http://localhost:3500/old" we get a 404 error on the page 
+ But if we run http://localhost:3500 we get an "Index" display on the page
+ http://localhost:3500/data/data.txt - This will display what is inside "data.txt"
+ http://localhost:3500/new-page.html - This displays what is in the new page but the issue is that we can't see the picture
+
+ // If we had something like this which had specified a redirect for 
+ http://localhost:3500/old-page.html - Then we get redirected to the new-page immediately
+
+ Node.JS-Learning\img\img1.PNG
+
+
+ If we had a syntax error in our code, then the error name and error message will be put in our errorLog.txt file.
+
+ 
