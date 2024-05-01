@@ -109,4 +109,12 @@ In the package.json file, change the main to "server.js"
 
  If we had a syntax error in our code, then the error name and error message will be put in our errorLog.txt file.
 
+
+ // EXPRESS.JS
+ Go to the Express.JS page -> Guide -> Routing documentation
+ npm install -> This will go ahead and install all the dependencies
+
+ // To add Express as a dependency
+ npm i express
+
  
