@@ -28,12 +28,13 @@ const logEvents = async (message , logName) => {
     console.log(logItem);
 
     try{
-        // To check if the directory doesn't exis
-        if(!fs.existsSync(path.join(__dirname,'logs'))){
+        // To check if the directory doesn't exist
+        // Note that the two dots ".." is used to move two directories up
+        if(!fs.existsSync(path.join(__dirname, '..', 'logs'))){
             // Then to create the 'logs' directory
-            await fsPromises.mkdir(path.join(__dirname, 'logs'));
+            await fsPromises.mkdir(path.join(__dirname, '..','logs'));
         }
-        await fsPromises.appendFile(path.join(__dirname, 'logs', logName), logItem);
+        await fsPromises.appendFile(path.join(__dirname, '..','logs', logName), logItem);
 
     }catch(err){
         console.log(err);
@@ -42,9 +43,29 @@ const logEvents = async (message , logName) => {
 
 }
 
+// To define the logger function here
+// Custom Middleware Logger
+/**
+ * This is used to make some alterations to our function of request and response
+ */
+const logger = (req, res, next) => {
+    // To make use of the log Events, we pass in the required parameters
+    logEvents(`${req.method}\t${req.headers.origin}\t${req.url}`, 'reqLog.txt');
+    // With above, we get the headers.origin as "undefined" -> When we simply run on Chrome -> This is because we are making use of our local host domain
+    // Then we go online to Google -> Developer tools -> Console -> And then we call the fetch('http://localhost:3500');
+    // We get -> GET	https://www.google.com	/
+    console.log(`${req.method} ${req.path}`)
+    next(); 
+    /**
+     * We get
+     * GET /
+       GET /css/style.css
+     */
+};
+
 // To export the module
 // This will allow us to be able to make use of this outside the file
-module.exports = logEvents;
+module.exports = {logEvents, logger};
 
 
 
