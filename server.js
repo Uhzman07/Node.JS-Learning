@@ -79,87 +79,36 @@ app.use(express.urlencoded({extended:false}));
 // This will be applied to all route as they come in
 app.use(express.json());
 
+/***
+ * SERVE STATIC FILES
+ */
+
 // In order to server static files (This is also part of the middle ware)
 // This makes it possible to apply css changes to our file
 app.use(express.static(path.join(__dirname, '/public'))); // Note that we will have to create a public folder for this -> Then we put in our css folder and image folder in it, and also create a new folder "text" in it.
 
-/**
- * Since we have made our css file in a public folder then we we try to access "http://localhost:3500/css/style.css" -> Then we get the entire CSS code written to the browser
- * That is the public has made it available to the public
+// The default just like above is 
+// app.use('/', express.static(path.join(__dirname, '/public')));
+
+// To make CSS apply to the subdir as well
+app.use('/subdir',express.static(path.join(__dirname, '/public')));
+
+/***
+ * ROUTES
  */
 
-// Move "data.text" from the data folder to the text folder
-/**
- * Note that when we run this, the page appears with the css code that has been applied in the public folder
- */
+// If we had 
+//app.use('/*', require('./routes/subdir')); // Then this regex expression will over shadow all other instances since it accepts all directories after the slash
+app.use('/', require('./routes/root')); // Now, we will be able to get the new page with the image
 
+// Then to import the routers
+app.use('/subdir',require('./routes/subdir'));
+ // Then if we run Chrome and then check the "/subdir" then we get our subdir index -> So what we type at the beginning of use will be the starting
+// "'/subdir'" adds an additional starting point for checking!
 
-// To specify our router
-// Note that a simple '/' means home of default.
-// '^/$|index.html' -> "^" means begin with "/" and "$" means end with "/" 
-// This then means if the request begins with a slash or ends with a slash OR ("|") if the the request is "index.html" then offer the same response
-// So when we give a simple slash or type "index.html" then we can get the return value
-// Note that unlike before when we had to manually specify the status code and the conteny 
-// Then to make the the ".html" optional in the , we can use regular expression by doing index(.html)?
-/**
- * Note that functions of app like get(), put() and the rest all work as a water fall.
- */
-app.get('^/$|index(.html)?', (req, res) => {
-     
-     //res.send('Hello World!'); // Then run "npm run dev" // This sends a simple text
-
-     // Then to render a file 
-     // This is used to render the file, doing that, then we specify the root to start from to tell that it should start from a particular point
-     //res.sendFile('./views/index.html', {root:__dirname});
-
-     // For simpler way of doing the same thing but with minimal code
-     res.sendFile(path.join(__dirname, 'views', 'index.html'));
-
-})
-
-// In order to specify upon the request to get a particular page
-app.get('/new-page(.html)?', (req, res) => {
-     // This is used to send the new page as visited
-     res.sendFile(path.join(__dirname, 'views', 'new-page.html'));
-})
-
-
-// In order to specify a redirect on request to access an old page
-app.get('/old-page(.html)?', (req, res) => {
-     // This is used to redirect to the new page.
-     res.redirect(301,'new-page.html'); // This sends a 302 by default - This is because a "302" doesn't necessarily get the search engine to change to a permanent redirect
-     // What we have to do is to specify it as a 301
-})
-
-// ROUTE HANDLERS
-app.get('/hello(.html)?', (req, res, next) => {
-     console.log('attempted to load hello.html');
-     next() // Note that is used to move to the next expression that we have that is, another (req, res)
-     // Note that what next() does is that it goes on to call the next function in the chain
-}, (req, res) => {
-     res.send('Hello World!');
-})
-
-// Chaining ROUTE HANDLERS
-const one = (req, res, next) => {
-     console.log('one');
-     next();
-}
-
-const two = (req, res, next) => {
-     console.log('two');
-     next();
-}
-
-const three = (req, res) => {
-     console.log('three');
-     res.send('Finished!');
-}
-
-// Then in order to apply the sequential chaining
-// We can put all in an array
-app.get('/chain(.html)?', [one, two, three]); // So when we type '/chain(.html)?' then we go from one -> two -> three
-
+// Then for Rest API
+// Note that this will just be routed by users going to "employees"
+app.use('/employees', require('./routes/api/employees'))
 
 
 /*
@@ -198,10 +147,6 @@ app.all('*', (req, res) => {
           res.type('txt').send("404 Not Found");
      }
 
-
-     
-     
-     
 
 });
 
