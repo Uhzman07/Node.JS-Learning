@@ -127,4 +127,7 @@ In the package.json file, change the main to "server.js"
  Access to fetch at 'http://localhost:3500/' from origin 'https://www.google.com' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. If an opaque response serves your needs, set the request's mode to 'no-cors' to fetch the resource with CORS disabled.
 // Then to install the dependency needed -> npm i cors
 
+// In order to install the encryption package
+npm i bcrypt
+
  

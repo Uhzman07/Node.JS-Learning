@@ -74,6 +74,14 @@ app.use('/',express.static(path.join(__dirname, '/public'))); // Note that we wi
 //app.use('/*', require('./routes/subdir')); // Then this regex expression will over shadow all other instances since it accepts all directories after the slash
 app.use('/', require('./routes/root')); // Now, we will be able to get the new page with the image
 
+// Then for the Register route
+app.use('/register', require('./routes/register'));
+
+// Then for the Auth route
+app.use('/auth', require('./routes/auth'));
+
+
+
 // Then for Rest API
 // Note that this will just be routed by users going to "employees"
 app.use('/employees', require('./routes/api/employees'))
