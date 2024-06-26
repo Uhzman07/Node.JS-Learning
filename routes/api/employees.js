@@ -1,8 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const path = require('path');
-const data = {};
-data.employees = require('../../data/employees.json');
+
+// Then to import the exported module
+// This will allow us to follow the MVC pattern i.e the Modal View Controller pattern
+const employeesController = require('../../controllers/employessController');
+
+
+
 
 /**
  * Then to perform a GET request based on the Route
@@ -20,33 +25,17 @@ data.employees = require('../../data/employees.json');
  * When trying a POST request, then we will have to specify the JSON line in the body before we send
   */
 router.route('/')
-    .get((req, res) => {
-        res.json(data.employees);
-    })
-    .post((req, res) =>{
-        res.json({
-            "firstname": req.body.firstname,
-            "lastname": req.body.lastname
-        });
-    })
-    .put((req, res) =>{
-        res.json({
-            "firstname": req.body.firstname,
-            "lastname": req.body.lastname
-        });
-    })
-    .delete((req, res) => {
-        res.json({"id": req.body.id})
-    })
+    .get(employeesController.getAllEmployees)
+    .post(employeesController.createNewEmployee)
+    .put(employeesController.updateEmployee)
+    .delete(employeesController.deleteEmployee)
 
 // This is because we are passing in a parameter instead
 /**
  * Then the request will be in the form "http://localhost:3500/employees/1" ":id" means data type of id
  */
 router.route('/:id')
-    .get((req, res) => {
-        res.json({"id": req.params.id}); // This is because we have made use of the parameter directly
-    })
+    .get(employeesController.getEmployee);
     // params is used because it is contained in the request body
 
 
