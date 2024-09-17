@@ -130,4 +130,56 @@ In the package.json file, change the main to "server.js"
 // In order to install the encryption package
 npm i bcrypt
 
+// Chapter 11
+JWT - JSON Web Tokens
+This is a form of user identification that is issued after the initial user authentication takes place
+// After the user logs in, the JWT renders the Access Token and Refresh Token
+Access Token = Short Time And
+Refresh Token = Long Time
+
+------- HAZARDS -------
+XSS : Cross-Site Scripting
+CSRF: CS Request Forgery
+
+--- Access Token -----
+Sent as JSON
+Client stores in memory
+Do NOT store in local storage or cookie - This is because it is automatically lost when we refresh (Always keep in memory because even an hacker can access using java script)
+
+--- Refresh Token ----
+Sent as httpOnly cookie
+Not accessible via JavaScript
+Must have expiry at some point
+
+-- ACCESS TOKEN ---
+Issued at Authorization
+Client uses for API Access until expires
+Verified with Middleware
+New token issued at Refresh request
+
+-- REFRESH TOKEN
+Issued at Authorization
+Client uses to request new Access Token 
+Verified with endpoint & database
+Must be allowed to expire or logout // So that indefinite access is not allowed\
+
+// IN ORDER TO INSTALL THE PACKAGES THAT WE need
+Use this - npm i dotenv jsonwebtoken cookie-parser
+
+-- Create the file ".env" at the root level
+
+-- Go to the terminal 
+-- Type "node"
+-- Node has a common cor module called crypto
+-- Then in the terminal, we type "require('crypto').randomBytes(64).toString('hex')"
+-- This above is used to generate a random crypto byte string that we can be used for access token encryption (Then we get a code that can be used as the access code that we need in the ".env" file)
+-- We can repeat this same process in the terminal to generate another code for the refresh token
+
+// NOTE 
+-- To make sure that our code does not go beyond the line, we can use "Alt + Z" to re align it
+
+-- Also make sure to add the ".env" file to the gitignore file 
+
+
+
  

@@ -57,9 +57,12 @@ const updateEmployee = (req, res) => {
    // This is used to filter out the employee that we have just updated
    const filteredArray = data.employees.filter(emp => emp.id !== parseInt(req.body.id));
 
+
+   // Then to copy the new employee to the newly filtered array of employees
    const unsortedArray = [...filteredArray, employee];
 
    // Then to set the employees to the json file and then sort them in order alongside
+   // This sort mechanism means that if the first employee id which is "a" is greater than the other employee id "b" which is the following employee id then return "1" which means that "a" should go after "b" then if other wise, the tenary operator makes "a" go before "b" which is signified by "-1" else if the values are the same then it returns "0" which means that they have the same id so there should be no need to sort 
    data.setEmployees(unsortedArray.sort((a,b) => a.id > b.id ? 1 : a.id < b.id ? -1 : 0));
 
    res.json(data.employees);

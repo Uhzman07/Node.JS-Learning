@@ -10,6 +10,10 @@ const whitelist = [
      'https://localhost:3500'
 ];
 
+// To import the allowed origins that is the white list
+const allowedOrigins = require('./allowedOrigins');
+
+
 /**
  * The origin is where the request is coming from
  */
@@ -18,7 +22,7 @@ const corsOptions = {
      origin : (origin, callback) => {
           // To check if the origin passed in is actually present in the white list or to check if the origin is "Undefined"
           // After adding "!origin" then we will be able to access our backend using our local host -> !origin means undefined or false
-          if(whitelist.indexOf(origin) !== -1 || !origin){
+          if(allowedOrigins.indexOf(origin) !== -1 || !origin){
                callback(null, true); // This is used to send that it is true
           }
           else{

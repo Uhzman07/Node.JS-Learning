@@ -6,6 +6,8 @@ const path = require('path');
 // This will allow us to follow the MVC pattern i.e the Modal View Controller pattern
 const employeesController = require('../../controllers/employessController');
 
+const verifyJWT = require('../../middleware/verifyJWT');
+
 
 
 
@@ -25,6 +27,8 @@ const employeesController = require('../../controllers/employessController');
  * When trying a POST request, then we will have to specify the JSON line in the body before we send
   */
 router.route('/')
+    // Then to add the authentication to the router; we can insert this in the "get" i.e we pass it through the JWT middleware before it performs its actual function
+    //.get(verifyJWT, employeesController.getAllEmployees) // Then we test this in thunder bolt
     .get(employeesController.getAllEmployees)
     .post(employeesController.createNewEmployee)
     .put(employeesController.updateEmployee)

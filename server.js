@@ -23,13 +23,25 @@ const { logger } = require('./middleware/logEvents');
 // Note that if the module that if we are trying to import just one method from a module, then  we do not need the braces
 const errorHandler  = require('./middleware/errorHandler');
 
+// Then to insert the JWT
+const verifyJWT = require('./middleware/verifyJWT');
+
+// To insert the cookie Parser as well
+const cookieParser = require('cookie-parser');
+const { verify } = require('crypto');
+
+// In order to import the credentials
+const credentials = require('./middleware/credentials');
+
 // In order to define the port for hosting
 const PORT = process.env.PORT || 3500;
 
 // Custom Middleware Logger
 app.use(logger);
 
-
+// Handle options credentials check - before CORS!
+// and fetch cookies credentials requirement
+app.use(credentials);
 
 
 // Then to make use of cors
@@ -56,6 +68,9 @@ app.use(express.urlencoded({extended:false}));
 // This will be applied to all route as they come in
 app.use(express.json());
 
+// Middleware for Cookies
+app.use(cookieParser())
+
 /***
  * SERVE STATIC FILES
  */
@@ -80,7 +95,17 @@ app.use('/register', require('./routes/register'));
 // Then for the Auth route
 app.use('/auth', require('./routes/auth'));
 
+// Since the refreshController generates a new access code everytime, we have to verify using JWT after generating the access code
+// Note that this refresh token is used to generate a new access code
+app.use('/refresh', require('./routes/refresh'));
 
+// For the logout route
+app.use('/logout', require('./routes/logout'))
+
+
+// Then to insert the JWT Authentication 
+// -- Note that everything below this line will apply the JWT Authentication
+app.use(verifyJWT);
 
 // Then for Rest API
 // Note that this will just be routed by users going to "employees"
