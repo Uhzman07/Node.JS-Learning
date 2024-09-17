@@ -15,11 +15,13 @@ const getAllEmployees = (req, res) => {
 }
 
 const createNewEmployee = (req, res) => {
+    console.log("Usman");
+    console.log(req.body);
     // To create a new employee
     // To create a json format
     const newEmployee = {
         // This is used to get the id of the last employee and then add "one" to it
-        id: data.employees[data.employees.length -1].id + 1 || 1,
+        id: data.employees?.length ? data.employees[data.employees.length -1].id + 1 : 1,
         firstname: req.body.firstname,
         lastname: req.body.lastname
     }

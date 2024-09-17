@@ -28,7 +28,10 @@ const handleNewUser = async (req, res) => {
         const hashedPwd = await bcrypt.hash(pwd, 10);
 
         // store the new user
-        const newUser = {"username":user, "password": hashedPwd};
+        const newUser = {
+            "username":user,
+            "roles" : {"User" : 2001},
+            "password": hashedPwd};
 
         // Then to add to the DB
         usersDB.setUsers([...usersDB.users, newUser]); // This is inform of a mutable way of copying

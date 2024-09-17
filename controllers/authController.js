@@ -29,13 +29,20 @@ const handleLogin = async (req, res) =>{
     const match = await bcrypt.compare(pwd, foundUser.password);
 
     if(match){
+        // To get the roles from the JSON file, since the roles is not just a single attribute but an object in the json file
+        const roles = Object.values(foundUser.roles);
         // create JWTs
         // Also note that to access the ".env" file, we need to add ".process"
         // We also set the time that the access token can expire and the normal time that could be used in production is usually about 5 minutes
         const accessToken = jwt.sign(
-            {"username": foundUser.username},
+            {
+                "UserInfo": {
+                "username": foundUser.username,
+                "roles" : roles
+                }
+            },
             process.env.ACCESS_TOKEN_SECRET,
-            {expiresIn : '30s'}
+            {expiresIn : '80s'} // This was supposed to be set to 30 seconds
         );
 
         // Note that the refresh token needs to last a bit longer than the "ACCESS_TOKEN"

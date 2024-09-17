@@ -4,7 +4,10 @@ const path = require('path');
 
 // Then to import the exported module
 // This will allow us to follow the MVC pattern i.e the Modal View Controller pattern
-const employeesController = require('../../controllers/employessController');
+const employeesController = require('../../controllers/employeesController');
+
+const ROLES_LIST = require('../../config/roles_list');
+const verifyRoles = require('../../middleware/verifyRoles');
 
 const verifyJWT = require('../../middleware/verifyJWT');
 
@@ -30,9 +33,13 @@ router.route('/')
     // Then to add the authentication to the router; we can insert this in the "get" i.e we pass it through the JWT middleware before it performs its actual function
     //.get(verifyJWT, employeesController.getAllEmployees) // Then we test this in thunder bolt
     .get(employeesController.getAllEmployees)
-    .post(employeesController.createNewEmployee)
-    .put(employeesController.updateEmployee)
-    .delete(employeesController.deleteEmployee)
+    // When we try to post information, the middleware we had created does the function of verifying the roles
+    .post(verifyRoles(ROLES_LIST.Admin, ROLES_LIST.Editor),employeesController.createNewEmployee)
+    // We can also make use of the verify role middle ware when putting new information
+    .put(verifyRoles(ROLES_LIST.Admin, ROLES_LIST.Editor),employeesController.updateEmployee)
+
+    // We can also use the verify role middleware for the delete route but this can only be done by the admin
+    .delete(verifyRoles(ROLES_LIST.Admin),employeesController.deleteEmployee)
 
 // This is because we are passing in a parameter instead
 /**
