@@ -5,7 +5,7 @@
 
 // In order to create an image in the readme.md file on git
 // When we click this image link, the project gets imported to glitch
-[<img src = "https://cdn.pixabay.com/photo/2013/07/12/17/41/button-152243_640.png" width = "163px" />] (https://glitch.com/edit/#!/import/github/Uhzman07/Node.JS-Learning);
+[<img src = "https://cdn.pixabay.com/photo/2013/07/12/17/41/button-152243_640.png" width = "163px" />](https://glitch.com/edit/#!/import/github/Uhzman07/Node.JS-Learning/);
 
 **Deploy by clicking the button above**
 
