@@ -1,12 +1,6 @@
-const usersDB = {
-    users : require('../model/users.json'),
-    setUsers : function (data) {this.users = data}
-}
+const User = require('../model/User');
 
-const fsPromises = require('fs').promises;
-const path = require('path');
-
-
+// Note that logging out clears the refresh token from the collection
 
 const handleLogout = async (req, res) =>{
 
@@ -18,7 +12,7 @@ const handleLogout = async (req, res) =>{
     const refreshToken = cookies.jwt;
 
     // Is refreshToken in db?
-    const foundUser = usersDB.users.find(person => person.refreshToken === refreshToken);
+    const foundUser = await User.findOne({refreshToken}).exec();
 
     if(!foundUser){
         res.clearCookie('jwt',{httpOnly : true});
@@ -27,17 +21,10 @@ const handleLogout = async (req, res) =>{
 
     // To get to this point, it means that we have found the required refresh token in the database
     // Delete refreshToken in DB
-    const otherUsers = usersDB.users.filter(person=> person.refreshToken !== foundUser.refreshToken)
+    foundUser.refreshToken = ''; // We can just delete by setting it to an empty string
+    const result = await foundUser.save(); // Save here is used to update the document
+    console.log(result);
 
-    // Then to then re add the current user found but this time, we want to add an empty refresh token
-    const currentUser = {...foundUser, refreshToken:''};
-    usersDB.setUsers([...otherUsers,currentUser]);
-
-    await fsPromises.writeFile(
-        path.join(__dirname, '..','model','users.json'),
-        JSON.stringify(usersDB.users)
-    );
-    
     res.clearCookie('jwt', { httpOnly: true, sameSite :'None', secure : true}); // Note that we do not add the secure connection for https here because we are not in production
     // If we were in production, then we can add the option (secure : true)
 

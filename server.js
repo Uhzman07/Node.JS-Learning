@@ -121,7 +121,9 @@ app.use(verifyJWT);
 
 // Then for Rest API
 // Note that this will just be routed by users going to "employees"
-app.use('/employees', require('./routes/api/employees'))
+app.use('/employees', require('./routes/api/employees'));
+
+app.use('/users', require('./routes/api/users'));
 
 
 /*

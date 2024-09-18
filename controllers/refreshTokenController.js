@@ -1,16 +1,12 @@
-const usersDB = {
-    users : require('../model/users.json'),
-    setUsers : function (data) {this.users = data}
-}
 
-
+const User = require('../model/User');
 
 // In order to install the JWT packages that we need 
 const jwt = require('jsonwebtoken');
 // require('dotenv').config();
 
 
-const handleRefreshToken = (req, res) =>{
+const handleRefreshToken = async (req, res) =>{
 
     // Note that after the access token had been stored in the http-only cookie, then invoking this refresh controller generates a new access token everytime
     const cookies = req.cookies;
@@ -20,7 +16,8 @@ const handleRefreshToken = (req, res) =>{
     console.log(cookies.jwt);
     const refreshToken = cookies.jwt;
 
-    const foundUser = usersDB.users.find(person => person.refreshToken === refreshToken);
+    // We do not have to make the refresh token to be a field to find because it comes in a field format
+    const foundUser = await User.findOne({refreshToken}).exec();
 
     if(!foundUser){
         return res.sendStatus(403); // Forbidden

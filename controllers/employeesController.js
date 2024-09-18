@@ -1,95 +1,80 @@
-// To create an object instead
-const data = {
-    employees : require('../model/employees.json'),
-    setEmployees : function (data) {this.employees = data}
-}
-
-
-
+const Employee = require('../model/Employee');
 
 /*
     Note that these methods are used as functions to replace the routing option
 */
-const getAllEmployees = (req, res) => {
-    res.json(data.employees); // Since this is just to return all the employees that we have
-}
-
-const createNewEmployee = (req, res) => {
+const getAllEmployees = async (req, res) => {
     console.log("Usman");
-    console.log(req.body);
-    // To create a new employee
-    // To create a json format
-    const newEmployee = {
-        // This is used to get the id of the last employee and then add "one" to it
-        id: data.employees?.length ? data.employees[data.employees.length -1].id + 1 : 1,
-        firstname: req.body.firstname,
-        lastname: req.body.lastname
+    const employees = await Employee.find(); // Note that calling employee like this returns all the employees
+    if(!employees){
+        return res.status(204).json({'message' : 'No employees found.'});
     }
-
-    if(!newEmployee.firstname || !newEmployee.lastname){
-        // An error "400" means signifies that it did not go through
-        return res.status(400).json({'message' : 'First and last names are required.'});
-    }
-
-    // Note that we have to pass in array as our parameter
-    // This is used to set the employees to the new employee that we had created
-    /*
-        newEmployee is a new employee object that you want to add to the employees array.
-        [...] is the spread syntax. It creates a new array by copying all elements from data.employees and then adds newEmployee to the end of this new array.
-        data.setEmployees([...data.employees, newEmployee]) calls the setEmployees method, passing the new array (which includes the new employee) as the argument.
-        The setEmployees method then updates data.employees to this new array.
-    */
-    data.setEmployees([...data.employees, newEmployee]);
-
-    // This is to return the updated json file
-    res.status(201).json(data.employees);
+    res.json(employees);
 }
 
-const updateEmployee = (req, res) => {
-   // This is used to find an employee based on the id
-   const employee = data.employees.find(emp => emp.id === parseInt(req.body.id));
+const createNewEmployee = async (req, res) => {
+    if(!req?.body?.firstname || !req?.body?.lastname){
+        return res.status(400).json({'message': 'First name and last names are required'});
+    }
+    try{
+        const result = await Employee.create({
+            firstname : req.body.firstname,
+            lastname : req.body.lastname
+        });
+        // "201" means created
+        res.status(201).json(result);
 
+    } catch(err){
+        console.error(err);
+    }
+}
+
+const updateEmployee = async (req, res) => {
+   
+    if(!req?.body?.id){
+        return res.status(400).json({'message': 'ID parameter is required.'});
+    }
+
+    const employee = await Employee.findOne({_id : req.body.id}).exec(); // Note that exec() is used to call the function to action
    if(!employee){
-    return res.status(400).json({"message": `Employee ID ${req.body.id} not found`});
+        return res.status(204).json({"message": `No employee natches ID ${req.body.id}.`});
    }
    // To check if the firstname and lastname are actually present and then set the names of the employee to the updated one
-   if(req.body.firstname) employee.firstname = req.body.firstname;
-   if(req.body.lastname) employee.lastname = req.body.lastname;
+   if(req.body?.firstname) employee.firstname = req.body.firstname;
+   if(req.body?.lastname) employee.lastname = req.body.lastname;
 
-   // This is used to filter out the employee that we have just updated
-   const filteredArray = data.employees.filter(emp => emp.id !== parseInt(req.body.id));
-
-
-   // Then to copy the new employee to the newly filtered array of employees
-   const unsortedArray = [...filteredArray, employee];
-
-   // Then to set the employees to the json file and then sort them in order alongside
-   // This sort mechanism means that if the first employee id which is "a" is greater than the other employee id "b" which is the following employee id then return "1" which means that "a" should go after "b" then if other wise, the tenary operator makes "a" go before "b" which is signified by "-1" else if the values are the same then it returns "0" which means that they have the same id so there should be no need to sort 
-   data.setEmployees(unsortedArray.sort((a,b) => a.id > b.id ? 1 : a.id < b.id ? -1 : 0));
-
-   res.json(data.employees);
+   const result = await employee.save(); // This is used to save any changes that we had made to the employee document
+   res.json(result);
 }
 
-const deleteEmployee = (req, res) =>{
-  const employee = data.employees.find(emp => emp.id === parseInt(req.body.id));
+const deleteEmployee = async (req, res) =>{
+
+  if(!req?.body?.id){
+    return res.status(400).json({'message': 'Employee ID required.'});
+  }
+  const employee = await Employee.findOne({_id: req.body.id}).exec();
 
   // If the employee is already not present
   if(!employee){
-    return res.status(400).json({"message":`Employee ID ${req.body.id} not found`});
+    console.log("Usmam");
+    return res.status(204).json({"message":`No employee matches ID ${req.body.id}.`});
   }
-  // If the employee is present, then we wan filter it out
-  const filteredArray = data.employees.filter(emp => emp.id !== parseInt(req.body.id));
 
-  // And then we return the filtered list into the json file
-  data.setEmployees([...filteredArray]);
+  // Then to delete the employee of the particular id
+  const result = await employee.deleteOne({_id : req.body.id});
 
-  res.json(data.employees);
+  //console.log(result);
+
+  res.json(result);
 }
 
-const getEmployee = (req, res) =>{
-    const employee = data.employees.find(emp => emp.id === parseInt(req.params.id));
+const getEmployee = async (req, res) =>{
+    if(!req?.params?.id){
+        return res.status(400).json({'message': 'Employee ID required.'});
+    }
+    const employee = await Employee.findOne({_id: req.params.id}).exec();
     if(!employee){
-        return res.status(400).json({"message": `Employee ID ${req.params.id} not found`});
+        return res.status(204).json({"message":`No employee matches ID ${req.params.id}.`});
     }
     res.json(employee);
 }

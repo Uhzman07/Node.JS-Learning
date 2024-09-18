@@ -1,7 +1,12 @@
+/*
 const usersDB = {
     users : require('../model/users.json'),
     setUsers : function (data) {this.users = data}
 }
+*/
+// To make use of the mongo DB database
+const User = require('../model/User');
+
 
 const fsPromises = require('fs').promises;
 const path = require('path');
@@ -18,7 +23,8 @@ const handleNewUser = async (req, res) => {
     }
 
     // Check for duplicate usernames in the db
-    const duplicate = usersDB.users.find(person => person.username === user);
+    // This method below returns any user that matches the user passed in
+    const duplicate = await User.findOne({username : user}).exec(); //  Note that we have to use the "exec()" with findOne because it could also make use of a call back
 
     if(duplicate) return res.sendStatus(409); // This means a conflict
 
@@ -27,20 +33,15 @@ const handleNewUser = async (req, res) => {
         // Hashing alone might not be enough sometimes we have to add a salt should in case an hacker hacks into our DB and then getting one hash code will allow getting others
         const hashedPwd = await bcrypt.hash(pwd, 10);
 
-        // store the new user
-        const newUser = {
+        // Create and store the new user // This is because mongoose allows us to directly store data
+        // Note that we have not added the role and object id as fields here because it gets added to the database by DEFAULT
+        const result =  await User.create({
             "username":user,
-            "roles" : {"User" : 2001},
-            "password": hashedPwd};
-
-        // Then to add to the DB
-        usersDB.setUsers([...usersDB.users, newUser]); // This is inform of a mutable way of copying
-
-        await fsPromises.writeFile(
-            path.join(__dirname,'..', 'model','users.json'),
-            JSON.stringify(usersDB.users)
-        )
-        console.log(usersDB.users);
+            "password": hashedPwd
+        });
+        
+        
+        console.log(result);
         res.status(201).json({'success': `New user ${user} created!`});
 
 

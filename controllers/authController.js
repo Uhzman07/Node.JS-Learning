@@ -1,17 +1,11 @@
-const usersDB = {
-    users : require('../model/users.json'),
-    setUsers : function (data) {this.users = data}
-}
 
+const User = require('../model/User');
 const bcrypt = require('bcrypt');
 
 // In order to install the JWT packages that we need 
 const jwt = require('jsonwebtoken');
 // require('dotenv').config();
 
-// Since we have not started integrating databases like MongoDB, we will stick to making use of fsPromises
-const fsPromises = require('fs').promises;
-const path = require('path');
 
 
 const handleLogin = async (req, res) =>{
@@ -19,7 +13,7 @@ const handleLogin = async (req, res) =>{
     if(!user || !pwd){
         return res.status(400).json({'message':'Username and password are required.'});
     }
-    const foundUser = usersDB.users.find(person => person.username === user);
+    const foundUser = await User.findOne({username: user}).exec();
 
     if(!foundUser){
         return res.sendStatus(401); // Unauthorized
@@ -56,20 +50,9 @@ const handleLogin = async (req, res) =>{
 
         // Saving refresh Token with current user
         
-        // To create an array of the users that aren't the user that we found/logged in
-        const otherUsers = usersDB.users.filter(person => person.username !== foundUser.username);
-
-        // We are storing the refresh token in the json; that is, the refresh token will co-exist with the password
-        // That is the current user will have a new field called the "refreshToken"
-        const currentUser = { ...foundUser, refreshToken};
-
-        usersDB.setUsers([...otherUsers, currentUser]);
-
-        await fsPromises.writeFile(
-            path.join(__dirname, '..', 'model', 'users.json'),
-            JSON.stringify(usersDB.users)
-
-        )
+       foundUser.refreshToken = refreshToken;
+       const result = await foundUser.save();
+       console.log(result);
 
         // We want to set the refreshToken to the cookie, but since the cookie can be accessed with JavaScript, then we can make it encrypted by using "https"
         // Note that the maxAge is in milliseconds meaning that it is 24 hours
@@ -82,8 +65,8 @@ const handleLogin = async (req, res) =>{
 
         */
        // Note that we set "sameSite" to none so as to avoid an error message when the front end is not on the same site as the API
-        res.cookie('jwt',refreshToken,{httpOnly : true, sameSite:'None', secure: true,
-         maxAge : 24 * 60 * 60 * 1000});
+        res.cookie('jwt',refreshToken,{httpOnly : true, sameSite:'None', 
+         maxAge : 24 * 60 * 60 * 1000}); // In production, we should add the option "secure: true" (We can only take out the secure option to make things work when testing with thunder client)
 
 
         res.json({ accessToken }) // Note that the accessToken should be stored in memory 
