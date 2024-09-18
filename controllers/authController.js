@@ -7,7 +7,7 @@ const bcrypt = require('bcrypt');
 
 // In order to install the JWT packages that we need 
 const jwt = require('jsonwebtoken');
-require('dotenv').config();
+// require('dotenv').config();
 
 // Since we have not started integrating databases like MongoDB, we will stick to making use of fsPromises
 const fsPromises = require('fs').promises;

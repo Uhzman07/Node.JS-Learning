@@ -7,7 +7,7 @@ const usersDB = {
 
 // In order to install the JWT packages that we need 
 const jwt = require('jsonwebtoken');
-require('dotenv').config();
+// require('dotenv').config();
 
 
 const handleRefreshToken = (req, res) =>{

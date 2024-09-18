@@ -180,6 +180,12 @@ Use this - npm i dotenv jsonwebtoken cookie-parser
 
 -- Also make sure to add the ".env" file to the gitignore file 
 
+// NOTE
+--- We can make use of "ALT + Z" to wrap around the code in visual code studio
+
+// In order to install the mongoose library
+-- npm i mongoose
+
 
 
  

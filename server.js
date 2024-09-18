@@ -1,3 +1,6 @@
+// To be able to use the ".env" file all through the app
+require('dotenv').config(); 
+
 // To import Express.JS
 const express = require('express');
 
@@ -33,8 +36,17 @@ const { verify } = require('crypto');
 // In order to import the credentials
 const credentials = require('./middleware/credentials');
 
+// In order to install mongoose
+const mongoose = require('mongoose');
+
+// In order to import the mongoDB connect
+const connectDB = require('./config/dbConn');
+
 // In order to define the port for hosting
 const PORT = process.env.PORT || 3500;
+
+// Connect to MongoDB
+connectDB();
 
 // Custom Middleware Logger
 app.use(logger);
@@ -173,9 +185,17 @@ app.use(function (err, req, res, next){
 app.use(errorHandler);
 
 
-// Then to add a listener to the server(app)
-// Note that we have to include the PORT and then an ANONYMOUS FUNCTION
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+/*
+     Note that we do not want to lsiten to any port until MongoDB has been successfully connected 
+     We can check if it has been correctly connected before allowing it to listen to any port
+*/
+
+mongoose.connection.once('open', ()=> {
+     console.log('Connected to MongoDB');
+     // Then to add a listener to the server(app)
+     // Note that we have to include the PORT and then an ANONYMOUS FUNCTION
+     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+});
 
 
 /**
